@@ -35,9 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import org.apache.iotdb.db.conf.IoTDBConstant;
 import org.apache.iotdb.db.conf.IoTDBDescriptor;
 import org.apache.iotdb.db.exception.MetadataArgsErrorException;
 import org.apache.iotdb.db.exception.PathErrorException;
+import org.apache.iotdb.db.mbeans.MManagerMBean;
+import org.apache.iotdb.db.service.JMXService;
 import org.apache.iotdb.db.utils.RandomDeleteCache;
 import org.apache.iotdb.tsfile.common.conf.TSFileConfig;
 import org.apache.iotdb.tsfile.exception.cache.CacheException;
@@ -56,11 +59,13 @@ import org.apache.iotdb.tsfile.write.schema.MeasurementSchema;
  *
  * @author Jinrui Zhang
  */
-public class MManager {
+public class MManager implements MManagerMBean {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MManager.class);
   private static final String ROOT_NAME = MetadataConstant.ROOT;
   public static final String TIME_SERIES_TREE_HEADER = "===  Timeseries Tree  ===\n\n";
+  private final String mbeanName = String.format("%s:%s=%s", IoTDBConstant.IOTDB_PACKAGE,
+      IoTDBConstant.JMX_TYPE, "MManager");
 
   // the lock for read/write
   private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -148,6 +153,8 @@ public class MManager {
     } finally {
       lock.writeLock().unlock();
     }
+
+    JMXService.registerMBean(getInstance(), mbeanName);
   }
 
   private void initFromDataFile(File dataFile) throws IOException, ClassNotFoundException {
@@ -1023,6 +1030,41 @@ public class MManager {
     } catch (PathErrorException e) {
       throw new CacheException(e);
     }
+  }
+
+  @Override
+  public String getDatafilePath() {
+    return datafilePath;
+  }
+
+  @Override
+  public String getLogFilePath() {
+    return logFilePath;
+  }
+
+  @Override
+  public int getMGraphPTreeMapSize() {
+    return mgraph.getPTreeMapSize();
+  }
+
+  @Override
+  public boolean getIsWriteToLog() {
+    return writeToLog;
+  }
+
+  @Override
+  public String getMetadataDirPath() {
+    return metadataDirPath;
+  }
+
+  @Override
+  public int getCheckAndGetDataTypeCacheSize() {
+    return checkAndGetDataTypeCache.size();
+  }
+
+  @Override
+  public int getMNodeCacheSize() {
+    return mNodeCache.size();
   }
 
   private static class MManagerHolder {

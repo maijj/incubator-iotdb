@@ -378,4 +378,12 @@ public class MGraph implements Serializable {
   public static String combineMetadataInStrings(String[] metadatas) {
     return MTree.combineMetadataInStrings(metadatas);
   }
+
+  /**
+   * get the map size of variable ptreeMap
+   * @return ptreeMap.size()
+   */
+  public int getPTreeMapSize(){
+    return ptreeMap.size();
+  }
 }
