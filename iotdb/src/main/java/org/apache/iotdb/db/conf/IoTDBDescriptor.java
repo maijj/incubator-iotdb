@@ -258,6 +258,10 @@ public class IoTDBDescriptor {
       conf.setPerformanceStatDisplayInterval(Long
           .parseLong(properties.getProperty("performance_stat_display_interval",
               Long.toString(conf.getPerformanceStatDisplayInterval())).trim()));
+
+      conf.setPerformanceMeasureThreshold(Long
+          .parseLong(properties.getProperty("performance_measure_threshold",
+              Long.toString(conf.getPerformanceMeasureThreshold())).trim()));
     } catch (IOException e) {
       LOGGER.warn("Cannot load config file because, use default configuration", e);
     } catch (Exception e) {

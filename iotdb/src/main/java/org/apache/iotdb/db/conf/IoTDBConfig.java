@@ -292,6 +292,12 @@ public class IoTDBConfig {
    */
   private long performanceStatDisplayInterval = 60000;
 
+  /**
+   * The stat time cost (in nanosecond) which are less than performanceMeasureThreshold
+   * will not be measured.
+   */
+  private long performanceMeasureThreshold = 1000000000;
+
   public IoTDBConfig() {
     // empty constructor
   }
@@ -854,5 +860,13 @@ public class IoTDBConfig {
 
   public void setPerformanceStatDisplayInterval(long performanceStatDisplayInterval) {
     this.performanceStatDisplayInterval = performanceStatDisplayInterval;
+  }
+
+  public long getPerformanceMeasureThreshold() {
+    return performanceMeasureThreshold;
+  }
+
+  public void setPerformanceMeasureThreshold(long performanceMeasureThreshold) {
+    this.performanceMeasureThreshold = performanceMeasureThreshold;
   }
 }

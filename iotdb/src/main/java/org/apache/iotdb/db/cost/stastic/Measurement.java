@@ -56,12 +56,13 @@ public class Measurement {
   private boolean isEnableStat;
   private long displayIntervalInMs;
   private static final Logger LOGGER = LoggerFactory.getLogger(Measurement.class);
-
+  private long threshold;
 
 
   private Measurement(){
     isEnableStat = IoTDBDescriptor.getInstance().getConfig().isEnableWritePerformanceStat();
     if (isEnableStat) {
+      threshold =  IoTDBDescriptor.getInstance().getConfig().getPerformanceMeasureThreshold();
       displayIntervalInMs = IoTDBDescriptor.getInstance().getConfig().getPerformanceStatDisplayInterval();
       operationLatenciesQueue = new ConcurrentLinkedQueue[Operation.values().length];
       operationLatencies = new long[Operation.values().length];
@@ -109,7 +110,10 @@ public class Measurement {
 
   public void addOperationLatency(Operation op, long startTime) {
     if (isEnableStat) {
-      operationLatenciesQueue[op.ordinal()].add((System.nanoTime() - startTime));
+      long a = System.nanoTime() - startTime;
+      if(a > threshold) {
+        operationLatenciesQueue[op.ordinal()].add(a);
+      }
     }
   }
 
