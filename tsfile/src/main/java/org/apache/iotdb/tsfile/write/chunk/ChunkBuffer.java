@@ -67,6 +67,17 @@ public class ChunkBuffer {
     this.pageBuffer = new PublicBAOS();
   }
 
+  /**
+   * constructor of ChunkBuffer.
+   *
+   * @param schema measurement schema
+   */
+  public ChunkBuffer(MeasurementSchema schema, PublicBAOS pageBuffer) {
+    this.schema = schema;
+    this.compressor = ICompressor.getCompressor(schema.getCompressor());
+    this.pageBuffer = pageBuffer;
+  }
+
   public int getNumOfPages() {
     return numOfPages;
   }
